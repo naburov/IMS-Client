@@ -15,7 +15,11 @@ import SquareFootOutlinedIcon from '@material-ui/icons/SquareFootOutlined';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
-import {SidePanel} from './SidePanel'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+
+import SidePanel from './SidePanel'
+import { setViewLayout, setTool} from '../store/view/actions';
 
 const FullScreen = {
     width: '100vw',
@@ -27,12 +31,16 @@ const SquareButton = {
     maxHeight: '30px'
 }
 
-export class ControlPanel extends React.Component {
+class ControlPanel extends React.Component {
     constructor(props) {
         super(props)
 
         this.state = { panelOpened: false }
         this.handleOpen = this.handleOpen.bind(this)
+        this.onMPRClick = this.onMPRClick.bind(this)
+        this.on3DClick = this.on3DClick.bind(this)
+        this.onSingleClick = this.onSingleClick.bind(this)
+        this.onRulerClick = this.onRulerClick.bind(this)
     }
 
     handleOpen() {
@@ -41,23 +49,54 @@ export class ControlPanel extends React.Component {
         })
     }
 
+    onMPRClick() {
+        this.props.setLayout('MPR')
+    }
+
+    on3DClick() {
+        this.props.setLayout('3d')
+    }
+
+    onSingleClick() {
+        this.props.setLayout('Single')
+    }
+
+    onRulerClick(){
+        this.props.setTool('Ruler')
+        console.log('Ruler selected')
+    }
+
     render() {
         return (
             <div>
                 <AppBar style={{ background: 'white', height: '12%', position: 'absolute', zIndex: 1500 }}>
                     <Grid container style={{ flexFrow: 1 }}>
-                        <Grid item xs={4} >
+                        <Grid item xs={3} >
                             <ButtonGroup style={{ marginTop: '15px' }} variant="contained"
-                                color="primary" aria-label="contained primary button group" >
+                                color="primary" aria-label="outlined primary button group" >
                                 <IconButton size="medium" color="primary" component={Link} href='/'>
                                     <FileCopyOutlinedIcon></FileCopyOutlinedIcon>
                                 </IconButton>
                             </ButtonGroup>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <ButtonGroup style={{ marginTop: '15px' }}
+                                color="primary" aria-label="outlined primary button group" >
+                                <Button variant="outlined" color="primary" onClick={this.onMPRClick} >
+                                    MPR
+                                </Button>
+                                <Button variant="outlined" color="primary" onClick={this.on3DClick}>
+                                    3D
+                                </Button>
+                                <Button variant="outlined" color="primary" onClick={this.onSingleClick}>
+                                    Single
+                                </Button>
+                            </ButtonGroup>
                         </Grid >
-                        <Grid item xs={4}>
+                        <Grid item xs={3}>
                             <ButtonGroup style={{ marginTop: '15px' }}
                                 variant="contained" color="primary" aria-label="contained primary button group" >
-                                <IconButton size="medium" color="primary" >
+                                <IconButton size="medium" color="primary" onClick={this.onRulerClick} >
                                     <SpaceBarOutlinedIcon></SpaceBarOutlinedIcon>
                                 </IconButton>
                                 <IconButton size="medium" color="primary" >
@@ -71,7 +110,7 @@ export class ControlPanel extends React.Component {
                                 </IconButton>
                             </ButtonGroup>
                         </Grid>
-                        <Grid item xs={4} >
+                        <Grid item xs={3} >
                             <ButtonGroup style={{ marginTop: '15px' }}
                                 variant="contained" color="primary" aria-label="contained primary button group" >
                                 <IconButton
@@ -99,3 +138,10 @@ export class ControlPanel extends React.Component {
         )
     }
 }
+
+export const mapDispatchToProps = dispatch => bindActionCreators({
+    setLayout: (newLayout) => setViewLayout(newLayout),
+    setTool: (newTool) => setTool(newTool)
+}, dispatch)
+
+export default connect(null, mapDispatchToProps)(ControlPanel)

@@ -1,23 +1,30 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import { DicomCanvas } from './components/DicomCanvas';
-import { Progress } from 'reactstrap';
-import { ToastContainer, toast } from 'react-toastify';
-import axios, { post } from 'axios';
-import { DicomCanvasQuad } from './components/DicomCanvas-2';
 import { Router } from './components/Router';
 import { BrowserRouter } from 'react-router-dom';
+import { createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux'
+import rootReducer from './store/reducers'
+import thunk from 'redux-thunk';
+import logger from 'redux-logger';
+
+const middlewares = [thunk, logger]
+
+const store = createStore(rootReducer, applyMiddleware(thunk))
+
 
 class App extends React.Component {
 
   render() {
+    console.log(store.getState())
     return (
-      <div className="App">
-        <BrowserRouter>
-          <Router></Router>
-        </BrowserRouter>
-      </div>
+      <Provider store = {store}>
+        <div className="App">
+          <BrowserRouter>
+            <Router></Router>
+          </BrowserRouter>
+        </div>
+      </Provider>
     );
   }
 }
