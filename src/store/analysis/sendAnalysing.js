@@ -1,7 +1,7 @@
 import {
-    setAnalyseState,
-    sendToAnalyseSuccess,
-    sendToAnalyseError
+    setAnalysisState,
+    sendForAnalysisSuccess,
+    sendForAnalysisError
 } from "./actions"
 
 
@@ -13,15 +13,15 @@ export const sendToAnalyseThunk = (instanceUrl, instanceId, projection) => {
         console.log(instanceId)
         console.log(projection)
 
-        dispatch(setAnalyseState('ANALYSING'))
+        dispatch(setAnalysisState('ANALYSING'))
 
         var url = new URL('http://localhost:5000/predict')
         var params = {
             'url': instanceUrl,
             'projection': projection,
             'instanceid': instanceId,
-            'firstIndex':50,
-            'lastIndex':300
+            'firstIndex':150,
+            'lastIndex':170
         }
         url.search = new URLSearchParams(params)
 
@@ -36,12 +36,12 @@ export const sendToAnalyseThunk = (instanceUrl, instanceId, projection) => {
             .then(json => {
                 console.log(json)                
                 console.log(typeof(json))
-                dispatch(setAnalyseState('ANALYSED'))
-                dispatch(sendToAnalyseSuccess(json))
+                dispatch(setAnalysisState('ANALYSED'))
+                dispatch(sendForAnalysisSuccess(json))
             })
             .catch(error => {
-                dispatch(setAnalyseState('NOT ANALYSED'))
-                dispatch(sendToAnalyseError(error))
+                dispatch(setAnalysisState('NOT ANALYSED'))
+                dispatch(sendForAnalysisError(error))
             })
 
     }

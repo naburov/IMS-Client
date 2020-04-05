@@ -38,26 +38,6 @@ export const viewReducer = (state = defaultState, action) => {
                 tool: action.payload
             }
 
-        case SET_ANALYSE_STATE:
-            return {
-                ...state,
-                analyseState: action.payload
-            }
-
-        case SEND_FOR_ANALYSE_ERROR: {
-            return {
-                ...state,
-                analyseError: action.payload,
-            }
-        }
-
-        case SEND_FOR_ANALYSE_SUCCESS: {
-            return {
-                ...state,
-                analyseResult: action.payload,
-            }
-        }
-
         case LOAD_FILE_PENDING: {
             return {
                 ...state,
@@ -99,6 +79,3 @@ export const getInstanceFileError = state => state.view.error;
 export const getLayout = state => state.view.layout
 export const getTool = state => state.view.tool
 export const getInstanceId = state => state.view.instanceId
-export const getAnalyseResult = state => state.view.analyseResult
-export const getAnalyseError = state => state.view.analyseError
-export const getAnalyseState = state => state.view.analyseState

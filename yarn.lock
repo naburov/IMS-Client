@@ -5645,9 +5645,9 @@ ignore@^4.0.6:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
   integrity sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
 
-image-JPEG2000@OHIF/image-JPEG2000#master:
+"image-JPEG2000@github:ohif/image-JPEG2000#master":
   version "0.3.1"
-  resolved "https://codeload.github.com/OHIF/image-JPEG2000/tar.gz/ed628f6ef0c505377179ce5c952cd7265c87e065"
+  resolved "https://codeload.github.com/ohif/image-JPEG2000/tar.gz/ed628f6ef0c505377179ce5c952cd7265c87e065"
 
 immer@1.10.0:
   version "1.10.0"

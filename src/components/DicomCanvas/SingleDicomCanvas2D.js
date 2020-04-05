@@ -14,8 +14,8 @@ import HelpersStack from "ami.js/src/helpers/helpers.stack";
 
 const Renderer = {
   flexBasis: '33vw',
-  flexGrow:'1',  
-  flexShrink:'1',
+  flexGrow: '1',
+  flexShrink: '1',
   display: 'block',
   border: '1px solid #FFFFFF',
 };
@@ -37,22 +37,66 @@ export class SingleDicomCanvas2D extends Component {
     this.canvasRef = React.createRef();
     this.orientation = props.orientation;
     this.stack = props.stack;
+
+    this.onWidgetMouseMove = this.onWidgetMouseMove.bind(this)
+    this.onWidgetMouseUp = this.onWidgetMouseUp.bind(this)
+    this.onWidgetMouseDown = this.onWidgetMouseDown.bind(this)
+
+    this.state = {
+      renderer: null,
+      widgets: [],
+      stackHelper: null,
+      controls: null,
+    }
   }
 
   componentDidMount() {
-    let widgets = []
+
+    const threeD = document.getElementById(this.props.orientation + '_renderer')
+
+    console.log(this.props)
     // CREATE RENDERER 2D
     const renderer = new XRenderer2D(this.props.orientation + '_renderer', this.props.orientation);
+
     let stackHelper = new HelpersStack(this.stack._stack);
     renderer._renderer.setClearColor(0x282740)
     renderer.add(stackHelper)
     renderer.animate();
 
+    renderer._renderer.setSize(threeD.offsetWidth, threeD.offsetHeight);
+    renderer._renderer.setPixelRatio(window.devicePixelRatio);
+
+
+    let controls = new ControlsTrackball(renderer._camera, threeD);
+    controls.rotateSpeed = 1.4;
+    controls.zoomSpeed = 1.2;
+    controls.panSpeed = 0.8;
+    controls.staticMoving = true;
+    controls.dynamicDampingFactor = 0.3;
+
+    this.setState({
+      renderer: renderer,
+      stackHelper: stackHelper,
+      controls: controls
+    })
+  }
+
+  onWidgetMouseUp(evt) {
+    console.log('Up')
+    for (let widget of this.state.widgets) {
+      if (widget.active) {
+        widget.onEnd(evt);
+        return;
+      }
+    }
+  }
+
+  onWidgetMouseMove(evt) {
     const threeD = document.getElementById(this.props.orientation + '_renderer')
-    threeD.addEventListener('mousemove', function (evt) {
-      // if something hovered, exit
+
+    try {
       let cursor = 'default';
-      for (let widget of widgets) {
+      for (let widget of this.state.widgets) {
         widget.onMove(evt);
         if (widget.hovered) {
           cursor = 'pointer';
@@ -60,86 +104,118 @@ export class SingleDicomCanvas2D extends Component {
       }
 
       threeD.style.cursor = cursor;
-    });
-    threeD.addEventListener('mousedown', function (evt) {
+    }
+    catch (e) {
+
+    }
+  }
+
+  onWidgetMouseDown(evt) {
+    evt.persist()
+
+    console.log('Pressed')
+
+    try {
       // if something hovered, exit
-      for (let widget of widgets) {
-        if (widget.hovered) {
-          widget.onStart(evt);
-          return;
-        }
+      for (let widget of this.state.widgets) {
+        if (widget != null)
+          if (widget.hovered) {
+            widget.onStart(evt);
+            return;
+          }
       }
+    } catch (e) {
 
-      threeD.style.cursor = 'default';
+    }
 
-    })
+    const threeD = document.getElementById(this.props.orientation + '_renderer')
+    const box = threeD.getBoundingClientRect();
+    const docEl = document.documentElement;
 
-    var controls = new ControlsTrackball(renderer._camera, threeD);
-    controls.rotateSpeed = 1.4;
-    controls.zoomSpeed = 1.2;
-    controls.panSpeed = 0.8;
-    controls.staticMoving = true;
-    controls.dynamicDampingFactor = 0.3;
-    renderer._camera.controls = controls;
+    const scrollTop = window.pageYOffset || docEl.scrollTop || document.body.scrollTop;
+    const scrollLeft =
+      window.pageXOffset || docEl.scrollLeft || document.body.scrollLeft;
+
+    const clientTop = docEl.clientTop || document.body.clientTop || 0;
+    const clientLeft = docEl.clientLeft || document.body.clientLeft || 0;
+
+    const top = box.top + scrollTop - clientTop;
+    const left = box.left + scrollLeft - clientLeft;
+
+    let offsets = {
+      top: Math.round(top),
+      left: Math.round(left),
+    };
+
+
+    threeD.style.cursor = 'default'
 
     let mouse = {
-      x: 200,
-      y: 200
+      x: (evt.clientX - offsets.left) / threeD.offsetWidth * 2 - 1,
+      y: -(evt.clientY - offsets.top) / threeD.offsetHeight * 2 + 1,
     };
 
     // update the raycaster
     let raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(mouse, renderer._camera);
-    let intersects = raycaster.intersectObject(stackHelper.slice.mesh);
+    raycaster.setFromCamera(mouse, this.state.renderer._camera);
+    let intersects = raycaster.intersectObject(this.state.stackHelper.slice.mesh);
 
     if (intersects.length <= 0) {
       return;
     }
+    console.log(intersects)
 
     let widget = null;
     console.log(this.props.tool)
+
     switch (this.props.tool) {
-      case 'VoxelProbe':
-        widget = new WidgetsVoxelProbe(stackHelper.slice.mesh, controls, {
-          stack: this.stack,
-          worldPosition: intersects[0].point,
-        });
+      case 'Handle':
+        widget =
+          new WidgetsHandle(this.state.stackHelper.slice.mesh, this.state.controls,
+            this.state.renderer._camera, threeD);
+        widget.worldPosition = intersects[0].point;
         break;
       case 'Ruler':
-        widget = new WidgetsRuler(stackHelper.slice.mesh, controls, {
-          lps2IJK: this.stack.lps2IJK,
-          pixelSpacing: this.stack.frame[stackHelper.index].pixelSpacing,
-          ultrasoundRegions: this.stack.frame[stackHelper.index].ultrasoundRegions,
-          worldPosition: intersects[0].point,
-        });
+        console.log('Using Ruler')
+        widget =
+          new WidgetsRuler(this.state.stackHelper.slice.mesh,
+            this.state.controls, this.state.renderer._camera, threeD);
+        widget.worldPosition = intersects[0].point;
         break;
-      case 'BiRuler':
-        widget = new WidgetsBiRuler(stackHelper.slice.mesh, controls, {
-          lps2IJK: this.stack.lps2IJK,
-          pixelSpacing: this.stack.frame[stackHelper.index].pixelSpacing,
-          ultrasoundRegions: this.stack.frame[stackHelper.index].ultrasoundRegions,
-          worldPosition: intersects[0].point,
-        });
+      case 'VoxelProbe':
+        widget =
+          new WidgetsVoxelProbe(
+            this.props.stack._stack, this.state.stackHelper.slice.mesh,
+            this.state.controls, this.state.renderer._camera, threeD);
+        widget.worldPosition = intersects[0].point;
         break;
       case 'Annotation':
-        widget = new WidgetsAnnotation(stackHelper.slice.mesh, controls, {
-          worldPosition: intersects[0].point,
-        });
+        widget =
+          new WidgetsAnnotation(this.statestackHelper.slice.mesh,
+            this.state.controls, this.state.renderer._camera, threeD);
+        widget.worldPosition = intersects[0].point;
         break;
-      case 'Handle':
+      case 'Delete':
+        console.log(intersects)
+        break;
       default:
-        widget = new WidgetsHandle(stackHelper.slice.mesh, controls, {
-          worldPosition: intersects[0].point,
-        });
+        console.log('Using Handle')
+        break;
     }
-    widgets.push(widget)
-    renderer.add(widget);
+    if (widget != null) {
+      this.state.widgets.push(widget)
+      this.state.renderer._scene.add(widget)
+    }
   }
 
   render() {
     return (
-        <div id={this.props.orientation + '_renderer'} style={Renderer} >
-        </div>
+      <div id={this.props.orientation + '_renderer'}
+        onMouseMove={(e) => this.onWidgetMouseMove(e)}
+        onMouseUp={(e) => this.onWidgetMouseUp(e)}
+        onClick={(e) => this.onWidgetMouseDown(e)}
+        style={Renderer} >
+      </div>
     )
   }
 }

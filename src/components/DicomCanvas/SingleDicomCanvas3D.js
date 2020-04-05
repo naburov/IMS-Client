@@ -32,19 +32,14 @@ export class SingleDicomCanvas3D extends Component {
     const renderer = new XRenderer3D('3d_renderer');
     renderer._renderer.setClearColor(0x282740)
     renderer.animate()
-    var vrHelper = new HelpersVR(this.stack._stack);
 
-    renderer.add(vrHelper);
+    console.log(this.stack._stack)
+
+    renderer.add(this.stack._zSlice);
+    renderer.add(this.stack._ySlice);
+    renderer.add(this.stack._xSlice);
+
     
-    let lut = new HelpersLut('my-lut-canvases');
-    lut.luts = HelpersLut.presetLuts();
-    lut.lutsO = HelpersLut.presetLutsO();
-
-    vrHelper.uniforms.uTextureLUT.value = lut.texture;
-    vrHelper.uniforms.uLut.value = 0;
-    // renderer.add(this.stack._zSlice);
-    // renderer.add(this.stack._ySlice);
-    // renderer.add(this.stack._xSlice);
   }
 
   render() {

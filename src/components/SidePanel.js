@@ -2,8 +2,9 @@ import React from 'react';
 import { CircularProgress, Container, Button } from '@material-ui/core';
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getAnalysePending, getAnalyseError, getAnalyseResult, getInstanceId, getAnalyseState } from '../store/view/reducers';
-import { sendToAnalyseThunk } from '../store/view/sendAnalysing'
+import { getInstanceId } from '../store/view/reducers';
+import { getAnalyseError, getAnalyseResult, getAnalyseState } from '../store/analysis/reducers';
+import { sendToAnalyseThunk } from '../store/analysis/sendAnalysing'
 import { AnalyseCard } from './AnalyseCard';
 
 
@@ -31,26 +32,26 @@ class SidePanel extends React.Component {
     }
 
     render() {
-        console.log(this.props.analyseState)       
-        switch (this.props.analyseState) {
+        console.log(this.props.analysisState)
+        switch (this.props.analysisState) {
             case 'ANALYSING':
-                return <div style={{ marginTop: '120px'}}>
+                return <div style={{ marginTop: '120px' }}>
                     <Container style={{ width: '400px' }}><CircularProgress /></Container>
                 </div >
             case 'ANALYSED':
                 return <div style={{ marginTop: '120px' }}>
                     <Container style={{ width: '400px' }}>
-                        {Object.keys(this.props.analyseResult).map(key => (
+                        {Object.keys(this.props.analysisResult).map(key => (
                             <AnalyseCard key={key}
-                                frameNumber={key}
-                                imageString={this.props.analyseResult[key]}>
+                                dataKey={key}
+                                data={this.props.analysisResult[key]}>
                             </AnalyseCard>
-                            
+
                         ))}
                     </Container>
                 </div >
             default: return <div style={{ marginTop: '120px' }}>
-                <Container style={{ width: '400px'}}>
+                <Container style={{ width: '400px' }}>
                     <Button variant="outlined" color="primary" onClick={this.sendForAnalysingClick}>
                         Отправить на анализ</Button>
                 </Container>
@@ -60,10 +61,10 @@ class SidePanel extends React.Component {
 }
 
 export const mapStateToProps = state => ({
-    analyseResult: getAnalyseResult(state),
-    analyseError: getAnalyseError(state),
+    analysisResult: getAnalyseResult(state),
+    analysisError: getAnalyseError(state),
     instanceId: getInstanceId(state),
-    analyseState: getAnalyseState(state)
+    analysisState: getAnalyseState(state)
 })
 
 export const mapDispatchToProps = dispatch => bindActionCreators({

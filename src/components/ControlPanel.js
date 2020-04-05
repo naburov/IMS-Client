@@ -12,6 +12,7 @@ import CompareOutlinedIcon from '@material-ui/icons/CompareOutlined';
 import ZoomOutMapOutlinedIcon from '@material-ui/icons/ZoomOutMapOutlined';
 import SpaceBarOutlinedIcon from '@material-ui/icons/SpaceBarOutlined';
 import SquareFootOutlinedIcon from '@material-ui/icons/SquareFootOutlined';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
 
@@ -40,7 +41,8 @@ class ControlPanel extends React.Component {
         this.onMPRClick = this.onMPRClick.bind(this)
         this.on3DClick = this.on3DClick.bind(this)
         this.onSingleClick = this.onSingleClick.bind(this)
-        this.onRulerClick = this.onRulerClick.bind(this)
+        this.onRulerClick = this.onRulerClick.bind(this)        
+        this.onDeleteClick = this.onDeleteClick.bind(this)
     }
 
     handleOpen() {
@@ -64,6 +66,11 @@ class ControlPanel extends React.Component {
     onRulerClick(){
         this.props.setTool('Ruler')
         console.log('Ruler selected')
+    }
+
+    onDeleteClick(){
+        this.props.setTool('Delete')
+        console.log('Delete selected')
     }
 
     render() {
@@ -107,6 +114,9 @@ class ControlPanel extends React.Component {
                                 </IconButton>
                                 <IconButton size="medium" color="primary" >
                                     <SquareFootOutlinedIcon></SquareFootOutlinedIcon>
+                                </IconButton>                                
+                                <IconButton size="medium" color="primary" onClick={this.onDeleteClick} >
+                                    <DeleteOutlineIcon></DeleteOutlineIcon>
                                 </IconButton>
                             </ButtonGroup>
                         </Grid>
