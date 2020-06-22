@@ -13,11 +13,13 @@ import HelpersStack from "ami.js/src/helpers/helpers.stack";
 
 
 const Renderer = {
-  flexBasis: '33vw',
   flexGrow: '1',
-  flexShrink: '1',
+  flexBasis: '0',
   display: 'block',
   border: '1px solid #FFFFFF',
+  width: '100%',
+  height: '100%',
+  minWidth: '10%',
 };
 
 const RendererRow = {
@@ -111,100 +113,111 @@ export class SingleDicomCanvas2D extends Component {
   }
 
   onWidgetMouseDown(evt) {
-    evt.persist()
-
-    console.log('Pressed')
-
-    try {
-      // if something hovered, exit
+    if (evt.altKey) {
       for (let widget of this.state.widgets) {
-        if (widget != null)
-          if (widget.hovered) {
-            widget.onStart(evt);
-            return;
-          }
+        if (widget.hovered) {
+          widget.free();
+          console.log(this.state.widgets.length)
+          var new_widgets = this.state.widgets.filter(function (el) {
+            return el._container != null;
+          });
+          this.setState({
+            widgets: new_widgets
+          })
+          return;
+        }
       }
-    } catch (e) {
+    } else {
 
-    }
+      console.log('Pressed')
 
-    const threeD = document.getElementById(this.props.orientation + '_renderer')
-    const box = threeD.getBoundingClientRect();
-    const docEl = document.documentElement;
+      try {
+        // if something hovered, exit
+        for (let widget of this.state.widgets) {
+          if (widget != null)
+            if (widget.hovered) {
+              widget.onStart(evt);
+              return;
+            }
+        }
+      } catch (e) {
 
-    const scrollTop = window.pageYOffset || docEl.scrollTop || document.body.scrollTop;
-    const scrollLeft =
-      window.pageXOffset || docEl.scrollLeft || document.body.scrollLeft;
+      }
 
-    const clientTop = docEl.clientTop || document.body.clientTop || 0;
-    const clientLeft = docEl.clientLeft || document.body.clientLeft || 0;
+      const threeD = document.getElementById(this.props.orientation + '_renderer')
+      const box = threeD.getBoundingClientRect();
+      const docEl = document.documentElement;
 
-    const top = box.top + scrollTop - clientTop;
-    const left = box.left + scrollLeft - clientLeft;
+      const scrollTop = window.pageYOffset || docEl.scrollTop || document.body.scrollTop;
+      const scrollLeft =
+        window.pageXOffset || docEl.scrollLeft || document.body.scrollLeft;
 
-    let offsets = {
-      top: Math.round(top),
-      left: Math.round(left),
-    };
+      const clientTop = docEl.clientTop || document.body.clientTop || 0;
+      const clientLeft = docEl.clientLeft || document.body.clientLeft || 0;
+
+      const top = box.top + scrollTop - clientTop;
+      const left = box.left + scrollLeft - clientLeft;
+
+      let offsets = {
+        top: Math.round(top),
+        left: Math.round(left),
+      };
 
 
-    threeD.style.cursor = 'default'
+      threeD.style.cursor = 'default'
 
-    let mouse = {
-      x: (evt.clientX - offsets.left) / threeD.offsetWidth * 2 - 1,
-      y: -(evt.clientY - offsets.top) / threeD.offsetHeight * 2 + 1,
-    };
+      let mouse = {
+        x: (evt.clientX - offsets.left) / threeD.offsetWidth * 2 - 1,
+        y: -(evt.clientY - offsets.top) / threeD.offsetHeight * 2 + 1,
+      };
 
-    // update the raycaster
-    let raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(mouse, this.state.renderer._camera);
-    let intersects = raycaster.intersectObject(this.state.stackHelper.slice.mesh);
+      // update the raycaster
+      let raycaster = new THREE.Raycaster();
+      raycaster.setFromCamera(mouse, this.state.renderer._camera);
+      let intersects = raycaster.intersectObject(this.state.stackHelper.slice.mesh);
 
-    if (intersects.length <= 0) {
-      return;
-    }
-    console.log(intersects)
+      if (intersects.length <= 0) {
+        return;
+      }
+      console.log(intersects.name)
 
-    let widget = null;
-    console.log(this.props.tool)
+      let widget = null;
 
-    switch (this.props.tool) {
-      case 'Handle':
-        widget =
-          new WidgetsHandle(this.state.stackHelper.slice.mesh, this.state.controls,
-            this.state.renderer._camera, threeD);
-        widget.worldPosition = intersects[0].point;
-        break;
-      case 'Ruler':
-        console.log('Using Ruler')
-        widget =
-          new WidgetsRuler(this.state.stackHelper.slice.mesh,
-            this.state.controls, this.state.renderer._camera, threeD);
-        widget.worldPosition = intersects[0].point;
-        break;
-      case 'VoxelProbe':
-        widget =
-          new WidgetsVoxelProbe(
-            this.props.stack._stack, this.state.stackHelper.slice.mesh,
-            this.state.controls, this.state.renderer._camera, threeD);
-        widget.worldPosition = intersects[0].point;
-        break;
-      case 'Annotation':
-        widget =
-          new WidgetsAnnotation(this.statestackHelper.slice.mesh,
-            this.state.controls, this.state.renderer._camera, threeD);
-        widget.worldPosition = intersects[0].point;
-        break;
-      case 'Delete':
-        console.log(intersects)
-        break;
-      default:
-        console.log('Using Handle')
-        break;
-    }
-    if (widget != null) {
-      this.state.widgets.push(widget)
-      this.state.renderer._scene.add(widget)
+      switch (this.props.tool) {
+        case 'Handle':
+          widget =
+            new WidgetsHandle(this.state.stackHelper.slice.mesh, this.state.controls,
+              this.state.renderer._camera, threeD);
+          widget.worldPosition = intersects[0].point;
+          break;
+        case 'Ruler':
+          console.log('Using Ruler')
+          widget =
+            new WidgetsRuler(this.state.stackHelper.slice.mesh,
+              this.state.controls, this.state.renderer._camera, threeD);
+          widget.worldPosition = intersects[0].point;
+          break;
+        case 'VoxelProbe':
+          widget =
+            new WidgetsVoxelProbe(
+              this.props.stack._stack, this.state.stackHelper.slice.mesh,
+              this.state.controls, this.state.renderer._camera, threeD);
+          widget.worldPosition = intersects[0].point;
+          break;
+        case 'Annotation':
+          widget =
+            new WidgetsAnnotation(this.statestackHelper.slice.mesh,
+              this.state.controls, this.state.renderer._camera, threeD);
+          widget.worldPosition = intersects[0].point;
+          break;
+        default:
+          console.log('Using default')
+          break;
+      }
+      if (widget != null) {
+        this.state.widgets.push(widget)
+        this.state.renderer._scene.add(widget)
+      }
     }
   }
 

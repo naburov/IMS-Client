@@ -38,11 +38,8 @@ class ControlPanel extends React.Component {
 
         this.state = { panelOpened: false }
         this.handleOpen = this.handleOpen.bind(this)
-        this.onMPRClick = this.onMPRClick.bind(this)
-        this.on3DClick = this.on3DClick.bind(this)
-        this.onSingleClick = this.onSingleClick.bind(this)
-        this.onRulerClick = this.onRulerClick.bind(this)        
-        this.onDeleteClick = this.onDeleteClick.bind(this)
+        this.onToolClick = this.onToolClick.bind(this)
+        this.onLayoutClick = this.onLayoutClick.bind(this)
     }
 
     handleOpen() {
@@ -51,26 +48,14 @@ class ControlPanel extends React.Component {
         })
     }
 
-    onMPRClick() {
-        this.props.setLayout('MPR')
+    onToolClick(toolName){
+        this.props.setTool(toolName)
+        console.log(toolName + ' selected')
     }
 
-    on3DClick() {
-        this.props.setLayout('3d')
-    }
-
-    onSingleClick() {
-        this.props.setLayout('Single')
-    }
-
-    onRulerClick(){
-        this.props.setTool('Ruler')
-        console.log('Ruler selected')
-    }
-
-    onDeleteClick(){
-        this.props.setTool('Delete')
-        console.log('Delete selected')
+    onLayoutClick(layoutName){
+        this.props.setLayout(layoutName)
+        console.log(layoutName + ' selected')
     }
 
     render() {
@@ -89,13 +74,13 @@ class ControlPanel extends React.Component {
                         <Grid item xs={3}>
                             <ButtonGroup style={{ marginTop: '15px' }}
                                 color="primary" aria-label="outlined primary button group" >
-                                <Button variant="outlined" color="primary" onClick={this.onMPRClick} >
+                                <Button variant="outlined" color="primary" onClick={()=>this.onLayoutClick('MPR')} >
                                     MPR
                                 </Button>
-                                <Button variant="outlined" color="primary" onClick={this.on3DClick}>
+                                <Button variant="outlined" color="primary" onClick={()=>this.onLayoutClick('3d')}>
                                     3D
                                 </Button>
-                                <Button variant="outlined" color="primary" onClick={this.onSingleClick}>
+                                <Button variant="outlined" color="primary" onClick={()=>this.onLayoutClick('Single')}>
                                     Single
                                 </Button>
                             </ButtonGroup>
@@ -103,19 +88,19 @@ class ControlPanel extends React.Component {
                         <Grid item xs={3}>
                             <ButtonGroup style={{ marginTop: '15px' }}
                                 variant="contained" color="primary" aria-label="contained primary button group" >
-                                <IconButton size="medium" color="primary" onClick={this.onRulerClick} >
+                                <IconButton size="medium" color="primary" onClick={()=>this.onToolClick('Ruler')} >
                                     <SpaceBarOutlinedIcon></SpaceBarOutlinedIcon>
                                 </IconButton>
-                                <IconButton size="medium" color="primary" >
+                                <IconButton size="medium" color="primary" onClick={()=>this.onToolClick('Annotation')}>
                                     <ZoomOutMapOutlinedIcon></ZoomOutMapOutlinedIcon>
                                 </IconButton>
-                                <IconButton size="medium" color="primary" >
+                                <IconButton size="medium" color="primary" onClick={()=>this.onToolClick('Handle')}>
                                     <CompareOutlinedIcon></CompareOutlinedIcon>
                                 </IconButton>
-                                <IconButton size="medium" color="primary" >
+                                <IconButton size="medium" color="primary" onClick={()=>this.onToolClick('Ruler')}>
                                     <SquareFootOutlinedIcon></SquareFootOutlinedIcon>
                                 </IconButton>                                
-                                <IconButton size="medium" color="primary" onClick={this.onDeleteClick} >
+                                <IconButton size="medium" color="primary" onClick={()=>this.onToolClick('Delete')} >
                                     <DeleteOutlineIcon></DeleteOutlineIcon>
                                 </IconButton>
                             </ButtonGroup>

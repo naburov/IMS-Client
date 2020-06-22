@@ -11,7 +11,7 @@ export class DicomCanvas extends Component {
 
     renderCanvas = (value, key) => {
         console.log(this.props.tool)
-        if (value == '3d')
+        if (value === '3d')
             return <SingleDicomCanvas3D key={key} stack={this.props.instanceFile}></SingleDicomCanvas3D>
         else
             return <SingleDicomCanvas2D key={key} orientation={value} tool={this.props.tool}
@@ -26,13 +26,12 @@ export class DicomCanvas extends Component {
         window.dispatchEvent(new Event('resize'));
     }
 
-
     render() {
         let key = 0;
         var canvases = []
         switch (this.props.layout) {
             case 'MPR':
-                canvases = [ 'coronal', 'axial', 'sagittal',]
+                canvases = ['coronal', 'axial', 'sagittal']
                 return (
                     <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>
                         {canvases.map(item => this.renderCanvas(item, key++))}
