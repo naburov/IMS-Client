@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 
-import XRenderer3D from "ami.js/src/helpers/x/helpers.x.renderer3d";
 
 const Renderer = {
   width:'100%',
@@ -20,15 +19,6 @@ export class SingleDicomCanvas3D extends Component {
   }
 
   componentDidMount() {
-    const renderer = new XRenderer3D('3d_renderer');
-    renderer._renderer.setClearColor(0x282740)
-    renderer.animate()
-
-    console.log(this.stack._stack)
-
-    renderer.add(this.stack._zSlice);
-    renderer.add(this.stack._ySlice);
-    renderer.add(this.stack._xSlice);
     
   }
 

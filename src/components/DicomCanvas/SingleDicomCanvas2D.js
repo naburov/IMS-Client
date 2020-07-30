@@ -1,16 +1,5 @@
 import React, { Component } from "react";
-
-import XRenderer2D from "ami.js/src/helpers/x/helpers.x.renderer2d"
-import * as THREE from 'three'
-import XVolume from "ami.js/src/helpers/x/helpers.x.volume"
-import WidgetsAnnotation from "ami.js/src/widgets/widgets.annotation";
-import WidgetsBiRuler from "ami.js/src/widgets/widgets.biruler";
-import WidgetsHandle from "ami.js/src/widgets/widgets.handle";
-import WidgetsRuler from "ami.js/src/widgets/widgets.ruler";
-import WidgetsVoxelProbe from "ami.js/src/widgets/widgets.voxelProbe";
-import ControlsTrackball from "ami.js/src/controls/controls.trackball";
-import HelpersStack from "ami.js/src/helpers/helpers.stack";
-
+import * as X from 'xtk'
 
 const Renderer = {
   flexGrow: '1',
@@ -20,6 +9,7 @@ const Renderer = {
   width: '100%',
   height: '100%',
   minWidth: '10%',
+  backgroundColor: '#000'
 };
 
 const RendererRow = {
@@ -55,183 +45,95 @@ export class SingleDicomCanvas2D extends Component {
   }
 
   componentDidMount() {
-
-    const threeD = document.getElementById(this.props.orientation + '_renderer')
-
-    console.log(this.props)
-    // CREATE RENDERER 2D
-    const renderer = new XRenderer2D(this.props.orientation + '_renderer', this.props.orientation);
-
-    let stackHelper = new HelpersStack(this.stack._stack);
-    renderer._renderer.setClearColor(0x282740)
-    renderer.add(stackHelper)
-    renderer.animate();
-
-    renderer._renderer.setSize(threeD.offsetWidth, threeD.offsetHeight);
-    renderer._renderer.setPixelRatio(window.devicePixelRatio);
-
-
-    let controls = new ControlsTrackball(renderer._camera, threeD);
-    controls.rotateSpeed = 1.4;
-    controls.zoomSpeed = 1.2;
-    controls.panSpeed = 0.8;
-    controls.staticMoving = true;
-    controls.dynamicDampingFactor = 0.3;
-
-    if (this.props.analyseState == 'ANALYSED')
-      this.addRTStruct(renderer)
-
-    this.setState({
-      renderer: renderer,
-      stackHelper: stackHelper,
-      controls: controls
-    })
+  
+      // the DICOM files
+      //
+      // this is a brain MR with dimensions 26x256x148 vx
+      // some slices were removed to get the 'look-into-the-brain' effect
+      var _dicom = ['53320924', '53321068', '53322843', '53322987', '53323131',
+                    '53323275', '53323419', '53323563', '53323707', '53323851',
+                    '53323995', '53324139', '53324283', '53325471', '53325615',
+                    '53325759', '53325903', '53320940', '53321084', '53322859',
+                    '53323003', '53323147', '53323291', '53323435', '53323579',
+                    '53323723', '53323867', '53324011', '53324155', '53324299',
+                    '53325487', '53325631', '53325775', '53325919', '53320956',
+                    '53322731', '53322875', '53323019', '53323163', '53323307',
+                    '53323451', '53323595', '53323739', '53323883', '53324027',
+                    '53324171', '53324315', '53325503', '53325647', '53325791',
+                    '53325935', '53320972', '53322747', '53322891', '53323035',
+                    '53323179', '53323323', '53323467', '53323611', '53323755',
+                    '53323899', '53324043', '53324187', '53325375', '53325519',
+                    '53325663', '53325807', '53325951', '53320988', '53322763',
+                    '53322907', '53323051', '53323195', '53323339', '53323483',
+                    '53323627', '53323771', '53323915', '53324059', '53324203',
+                    '53325391', '53325535', '53325679', '53325823', '53321004',
+                    '53322779', '53322923', '53323067', '53323211', '53323355',
+                    '53323499', '53323643', '53323787', '53323931', '53324075',
+                    '53324219', '53325407', '53325551', '53325695', '53325839',
+                    '53321020', '53322795', '53322939', '53323083', '53323227',
+                    '53323371', '53323515', '53323659', '53323803', '53323947',
+                    '53324091', '53324235', '53325423', '53325567', '53325711',
+                    '53325855', '53321036', '53322811', '53322955', '53323099',
+                    '53323243', '53323387', '53323531', '53323675', '53323819',
+                    '53323963', '53324107', '53324251', '53325439', '53325583',
+                    '53325727', '53325871', '53321052', '53322827', '53322971',
+                    '53323115', '53323259', '53323403', '53323547', '53323691',
+                    '53323835', '53323979', '53324123', '53324267', '53325455',
+                    '53325599', '53325743', '53325887'];
+      
+    
+    
+      // create a new test_renderer
+      var r = new X.renderer3D()
+      // r.bgColor = [0.2, 0.25, 0.4];
+      r.init();
+      r.camera.position = [0, 300, 0];
+      
+      // we create the X.volume container and attach all DICOM files
+      var v = new X.volume();
+      // map the data url to each of the slices
+      v.file = _dicom.sort().map(function(v) {
+    
+        // we also add the 'fake' .DCM extension since else wise
+        // XTK would think .org is the extension
+        return 'http://x.babymri.org/?' + v + '&.DCM';
+        
+      });
+      
+      // add the volume
+      r.add(v);
+      
+      // .. and render it
+      r.render();
+      
+      r.onShowtime = function() {
+    
+        // activate volume rendering
+        v.volumeRendering = true;
+        v.lowerThreshold = 80;
+        v.windowLower = 115;
+        v.windowHigh = 360;
+        v.minColor = [0, 0.06666666666666667, 1];
+        v.maxColor = [0.5843137254901961, 1, 0];
+        v.opacity = 0.2;
+        
+      };    
   }
 
   onWidgetMouseUp(evt) {
-    console.log('Up')
-    for (let widget of this.state.widgets) {
-      if (widget.active) {
-        widget.onEnd(evt);
-        return;
-      }
-    }
+
   }
 
   onWidgetMouseMove(evt) {
-    const threeD = document.getElementById(this.props.orientation + '_renderer')
 
-    try {
-      let cursor = 'default';
-      for (let widget of this.state.widgets) {
-        widget.onMove(evt);
-        if (widget.hovered) {
-          cursor = 'pointer';
-        }
-      }
-
-      threeD.style.cursor = cursor;
-    }
-    catch (e) {
-
-    }
   }
 
   onWidgetMouseDown(evt) {
-    if (evt.altKey) {
-      for (let widget of this.state.widgets) {
-        if (widget.hovered) {
-          widget.free();
-          console.log(this.state.widgets.length)
-          var new_widgets = this.state.widgets.filter(function (el) {
-            return el._container != null;
-          });
-          this.setState({
-            widgets: new_widgets
-          })
-          return;
-        }
-      }
-    } else {
 
-      console.log('Pressed')
-
-      try {
-        // if something hovered, exit
-        for (let widget of this.state.widgets) {
-          if (widget != null)
-            if (widget.hovered) {
-              widget.onStart(evt);
-              return;
-            }
-        }
-      } catch (e) {
-
-      }
-
-      const threeD = document.getElementById(this.props.orientation + '_renderer')
-      const box = threeD.getBoundingClientRect();
-      const docEl = document.documentElement;
-
-      const scrollTop = window.pageYOffset || docEl.scrollTop || document.body.scrollTop;
-      const scrollLeft =
-        window.pageXOffset || docEl.scrollLeft || document.body.scrollLeft;
-
-      const clientTop = docEl.clientTop || document.body.clientTop || 0;
-      const clientLeft = docEl.clientLeft || document.body.clientLeft || 0;
-
-      const top = box.top + scrollTop - clientTop;
-      const left = box.left + scrollLeft - clientLeft;
-
-      let offsets = {
-        top: Math.round(top),
-        left: Math.round(left),
-      };
-
-
-      threeD.style.cursor = 'default'
-
-      let mouse = {
-        x: (evt.clientX - offsets.left) / threeD.offsetWidth * 2 - 1,
-        y: -(evt.clientY - offsets.top) / threeD.offsetHeight * 2 + 1,
-      };
-
-      // update the raycaster
-      let raycaster = new THREE.Raycaster();
-      raycaster.setFromCamera(mouse, this.state.renderer._camera);
-      let intersects = raycaster.intersectObject(this.state.stackHelper.slice.mesh);
-
-      if (intersects.length <= 0) {
-        return;
-      }
-      console.log(intersects.name)
-
-      let widget = null;
-
-      switch (this.props.tool) {
-        case 'Handle':
-          widget =
-            new WidgetsHandle(this.state.stackHelper.slice.mesh, this.state.controls,
-              this.state.renderer._camera, threeD);
-          widget.worldPosition = intersects[0].point;
-          break;
-        case 'Ruler':
-          console.log('Using Ruler')
-          widget =
-            new WidgetsRuler(this.state.stackHelper.slice.mesh,
-              this.state.controls, this.state.renderer._camera, threeD);
-          widget.worldPosition = intersects[0].point;
-          break;
-        case 'VoxelProbe':
-          widget =
-            new WidgetsVoxelProbe(
-              this.props.stack._stack, this.state.stackHelper.slice.mesh,
-              this.state.controls, this.state.renderer._camera, threeD);
-          widget.worldPosition = intersects[0].point;
-          break;
-        case 'Annotation':
-          widget =
-            new WidgetsAnnotation(this.statestackHelper.slice.mesh,
-              this.state.controls, this.state.renderer._camera, threeD);
-          widget.worldPosition = intersects[0].point;
-          break;
-        default:
-          console.log('Using default')
-          break;
-      }
-      if (widget != null) {
-        this.state.widgets.push(widget)
-        this.state.renderer._scene.add(widget)
-      }
-    }
   }
 
   addRTStruct(renderer) {
-    var geometry = new THREE.BoxGeometry(1, 1, 1);
-    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    var cube = new THREE.Mesh(geometry, material);
-    // renderer._scene.add(cube);
-    console.log(renderer)
+
   }
 
   render() {

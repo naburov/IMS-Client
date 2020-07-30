@@ -1,4 +1,5 @@
-import XVolume from "ami.js/src/helpers/x/helpers.x.volume"
+import { volume as XVolume} from 'xtk'
+
 import {
     loadFileSuccess,
     loadFileError,
@@ -11,9 +12,7 @@ var SERIES_URL = "http://localhost:8042/series"
 
 export const loadInstanceFileThunk = (seriesId) => {
     return dispatch => {
-        console.log("start loading")
-        console.log(seriesId)
-        console.log(SERIES_URL + '/' + seriesId)
+        console.log('Start loading file')
         dispatch(loadFilePending)
         fetch(SERIES_URL + '/' + seriesId)
             .then(response => response.json())
@@ -22,13 +21,18 @@ export const loadInstanceFileThunk = (seriesId) => {
                 return json.Instances
             })
             .then(instanceIds => {
-                const xVolume = new XVolume();
-                xVolume.file = instanceIds.map(id => `http://localhost:8042/instances/${id}/file`);
-                xVolume.load()
-                    .then((volume) => {
-                        console.log("volume loaded")
-                        dispatch(loadFileSuccess(volume))
-                    })
+                // console.log('Creating volume')
+                // var volume = new XVolume();
+                // volume.file =  instanceIds.map(id => `http://localhost:8042/instances/${id}.dcm/file`);
+                // console.log(volume)
+                // console.log('File set!')
+                dispatch(loadFileSuccess('volume'))
+                // xVolume.file = instanceIds.map(id => `http://localhost:8042/instances/${id}/file`);
+                // xVolume.load()
+                //     .then((volume) => {
+                //         console.log("volume loaded")
+                //         dispatch(loadFileSuccess(volume))
+                //     })
             })
             .catch(error => {
                 dispatch(loadFileError(error))

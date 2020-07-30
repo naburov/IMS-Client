@@ -17,7 +17,6 @@
     "@types/react": "^16.9.38",
     "@types/react-dom": "^16.9.8",
     "OpenJPEG.js": "^0.10.2",
-    "ami.js": "https://github.com/naburov/ami",
     "axios": "^0.19.1",
     "babel-loader": "^8.1.0",
     "css-loader": "^3.6.0",
