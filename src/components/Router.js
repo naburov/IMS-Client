@@ -9,7 +9,7 @@ export class Router extends React.Component {
         return (
             <Switch>
                 <Route exact path='/' component={StudyWindow} />
-                <Route name="study" path='/study/:seriesId' component={MainWindow} />
+                <Route name="study" path='/study/:studyId/series/:seriesId' component={MainWindow} />
             </Switch>
         )
     }

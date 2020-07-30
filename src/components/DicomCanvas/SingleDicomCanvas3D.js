@@ -1,21 +1,12 @@
 import React, { Component } from "react";
 
 import XRenderer3D from "ami.js/src/helpers/x/helpers.x.renderer3d";
-import ControlsTrackball from "ami.js/src/controls/controls.trackball";
-import HelpersLut from "ami.js/src/helpers/helpers.lut";
-import HelpersVR from "ami.js/src/helpers/helpers.volumerendering";
-import LoadersVolume from "ami.js/src/loaders/loaders.volume";
 
 const Renderer = {
   width:'100%',
   height:'100%',
   display: 'block',
   border: '1px solid #FFFFFF'
-};
-
-const RendererRow = {
-  width: '100%',
-  height: '50%',
 };
 
 
@@ -38,7 +29,6 @@ export class SingleDicomCanvas3D extends Component {
     renderer.add(this.stack._zSlice);
     renderer.add(this.stack._ySlice);
     renderer.add(this.stack._xSlice);
-
     
   }
 

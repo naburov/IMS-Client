@@ -39,10 +39,12 @@ export class SingleDicomCanvas2D extends Component {
     this.canvasRef = React.createRef();
     this.orientation = props.orientation;
     this.stack = props.stack;
+    this.analyseState = props.analyseState
 
     this.onWidgetMouseMove = this.onWidgetMouseMove.bind(this)
     this.onWidgetMouseUp = this.onWidgetMouseUp.bind(this)
     this.onWidgetMouseDown = this.onWidgetMouseDown.bind(this)
+    this.addRTStruct = this.addRTStruct.bind(this)
 
     this.state = {
       renderer: null,
@@ -75,6 +77,9 @@ export class SingleDicomCanvas2D extends Component {
     controls.panSpeed = 0.8;
     controls.staticMoving = true;
     controls.dynamicDampingFactor = 0.3;
+
+    if (this.props.analyseState == 'ANALYSED')
+      this.addRTStruct(renderer)
 
     this.setState({
       renderer: renderer,
@@ -221,13 +226,21 @@ export class SingleDicomCanvas2D extends Component {
     }
   }
 
+  addRTStruct(renderer) {
+    var geometry = new THREE.BoxGeometry(1, 1, 1);
+    var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    var cube = new THREE.Mesh(geometry, material);
+    // renderer._scene.add(cube);
+    console.log(renderer)
+  }
+
   render() {
     return (
       <div id={this.props.orientation + '_renderer'}
         onMouseMove={(e) => this.onWidgetMouseMove(e)}
         onMouseUp={(e) => this.onWidgetMouseUp(e)}
         onClick={(e) => this.onWidgetMouseDown(e)}
-        style={Renderer} >
+        style={Renderer}>
       </div>
     )
   }

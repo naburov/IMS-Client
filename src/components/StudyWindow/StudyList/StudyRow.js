@@ -84,7 +84,7 @@ export class StudyRowComp extends React.Component {
                                 </Typography>
                             </CardContent>
                             <CardActions>
-                                <Link to={{ pathname: `/study/${this.study.Series[0]}` }} style={{ textDecoration: 'none' }}>
+                                <Link to={{ pathname: `/study/${this.study.ID}/series/${this.study.Series[0]}` }} style={{ textDecoration: 'none' }}>
                                     <Button variant="outlined" color="primary">
                                         Перейти к снимку</Button>
                                 </Link>

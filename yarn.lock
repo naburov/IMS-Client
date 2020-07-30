@@ -3097,10 +3097,9 @@ alphanum-sort@^1.0.0:
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
   integrity sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=
 
-ami.js@0.32.0:
+"ami.js@https://github.com/naburov/ami":
   version "0.32.0"
-  resolved "https://registry.yarnpkg.com/ami.js/-/ami.js-0.32.0.tgz#79cc331dad6fcc6e0072e032b63c9cbb7cf5c606"
-  integrity sha512-2PRXIMErYEQMwLWoPBDnmWRL6YX0VdDPFTC+qcYhKRgDU2F86ynFnds22Xi9gJCgiNDWRevjUWXsrCBtnBP+pA==
+  resolved "https://github.com/naburov/ami#d255db7c6beba032924c76ad1c85a0f3f843e1db"
   dependencies:
     OpenJPEG.js joedrago/openjpeg#master
     dicom-parser "1.8.1"
@@ -3110,7 +3109,7 @@ ami.js@0.32.0:
     nifti-reader-js v0.5.3
     nrrd-js "^0.2.1"
     pako "1.0.1"
-    three latest
+    three "^0.117.1"
 
 ansi-colors@4.1.1:
   version "4.1.1"
@@ -5415,7 +5414,7 @@ dotenv-expand@5.1.0:
   resolved "https://registry.yarnpkg.com/dotenv-expand/-/dotenv-expand-5.1.0.tgz#3fbaf020bfd794884072ea26b1e9791d45a629f0"
   integrity sha512-YXQl1DSa4/PQyRfgrv6aoNjhasp/p4qs9FjJ4q4cQk+8m4r6k4ZSiEyytKG8f8W9gi8WsQtIObNmKd+tMzNTmA==
 
-dotenv@8.2.0:
+dotenv@8.2.0, dotenv@^8.2.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.2.0.tgz#97e619259ada750eea3e4ea3e26bceea5424b16a"
   integrity sha512-8sJ78ElpbDJBHNeBzUbUVLsqKdccaa/BXF1uPTw3GrvQTBgrQrtObr2mUrE38vzYd8cEv+m/JBfDLioYcfXoaw==
@@ -9559,9 +9558,9 @@ object-hash@^1.3.1:
   integrity sha512-OSuu/pU4ENM9kmREg0BdNrUDIl1heYa4mBZacJc+vVWz4GtAwu7jO8s4AIt2aGRUTqxykpWzI3Oqnsm13tTMDA==
 
 object-inspect@^1.7.0:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.7.0.tgz#f4f6bd181ad77f006b5ece60bd0b6f398ff74a67"
-  integrity sha512-a7pEHdh1xKIAgTySUGgLMx/xwDZskN1Ud6egYYN3EdRW4ZMPNEDUTF+hwy2LUC+Bl+SyLXANnwz/jyh/qutKUw==
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.8.0.tgz#df807e5ecf53a609cc6bfe93eac3cc7be5b3a9d0"
+  integrity sha512-jLdtEOB112fORuypAyl/50VRVIBIdVQOSUUGQHzJ4xBSbit81zRarz7GThkEFZy1RceYrWYcPcBFPQwHyAc1gA==
 
 object-is@^1.0.1:
   version "1.0.1"
@@ -9788,17 +9787,10 @@ p-limit@^1.1.0:
   dependencies:
     p-try "^1.0.0"
 
-p-limit@^2.0.0:
+p-limit@^2.0.0, p-limit@^2.2.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-2.3.0.tgz#3dd33c647a214fdfffd835933eb086da0dc21db1"
   integrity sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==
-  dependencies:
-    p-try "^2.0.0"
-
-p-limit@^2.2.0:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-2.2.1.tgz#aa07a788cc3151c939b5131f63570f0dd2009537"
-  integrity sha512-85Tk+90UCVWvbDavCLKPOLC9vvY8OwEX/RtKF+/1OADJMVlFfEHOiMTPVyxg7mk/dKa+ipdHm0OUkTvCpMTuwg==
   dependencies:
     p-try "^2.0.0"
 
@@ -12997,7 +12989,7 @@ three@^0.112.1:
   resolved "https://registry.yarnpkg.com/three/-/three-0.112.1.tgz#f8d8f4d0f8e5f753dac6260491b8209457fdc131"
   integrity sha512-8I0O74hiYtKl3LgDNcPJbBGOlpekbcJ6fJnImmW3mFdeUFJ2H9Y3/UuUSW2sBdjrIlCM0gvOkaTEFlofO900TQ==
 
-three@latest:
+three@^0.117.1:
   version "0.117.1"
   resolved "https://registry.yarnpkg.com/three/-/three-0.117.1.tgz#a49bcb1a6ddea2f250003e42585dc3e78e92b9d3"
   integrity sha512-t4zeJhlNzUIj9+ub0l6nICVimSuRTZJOqvk3Rmlu+YGdTOJ49Wna8p7aumpkXJakJfITiybfpYE1XN1o1Z34UQ==

@@ -14,15 +14,20 @@ export class DicomCanvas extends Component {
         if (value === '3d')
             return <SingleDicomCanvas3D key={key} stack={this.props.instanceFile}></SingleDicomCanvas3D>
         else
-            return <SingleDicomCanvas2D key={key} orientation={value} tool={this.props.tool}
-                instanceId={this.props.instanceId} stack={this.props.instanceFile}></SingleDicomCanvas2D>
+            return <SingleDicomCanvas2D key={key}
+                orientation={value}
+                tool={this.props.tool}
+                analyseState={this.props.analyseState}
+                instanceId={this.props.instanceId}
+                stack={this.props.instanceFile}>
+            </SingleDicomCanvas2D>
     }
 
-    componentDidMount(){
+    componentDidMount() {
         window.dispatchEvent(new Event('resize'));
     }
 
-    componentDidUpdate(){        
+    componentDidUpdate() {
         window.dispatchEvent(new Event('resize'));
     }
 
@@ -40,14 +45,14 @@ export class DicomCanvas extends Component {
             case '3d':
                 canvases = ['3d']
                 return (
-                    <div style={{ display: 'flex', width: '100vw', height: '100vh'}}>
+                    <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>
                         {canvases.map(item => this.renderCanvas(item, key++))}
                     </div>
                 )
             default:
                 canvases = ['coronal']
                 return (
-                    <div style={{ display: 'flex', width: '100vw', height: '100vh'}}>
+                    <div style={{ display: 'flex', width: '100vw', height: '100vh' }}>
                         {canvases.map(item => this.renderCanvas(item, key++))}
                     </div>
                 )

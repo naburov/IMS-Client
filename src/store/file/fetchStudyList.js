@@ -10,7 +10,12 @@ export const fetchStudyListThunk = (dispatch) => {
     return dispatch => {
         console.log("start loading study list")
         dispatch(fetchStudyListPending());
-        fetch(STUDIES_URL)
+        fetch(STUDIES_URL, {
+            mode: 'cors',
+            headers: {
+                'Authorization': 'Basic b3J0aGFuYzpvcnRoYW5j',
+            }
+        })
             .then(response => response.json())
             .then(result => {
 

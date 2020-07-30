@@ -54,6 +54,8 @@ class SidePanel extends React.Component {
                 <Container style={{ width: '400px' }}>
                     <Button variant="outlined" color="primary" onClick={this.sendForAnalysingClick}>
                         Отправить на анализ</Button>
+                    <Button variant="outlined" color="primary" onClick={this.sendForAnalysingClick}>
+                        Получить результаты анализа</Button>
                 </Container>
             </div>
         }

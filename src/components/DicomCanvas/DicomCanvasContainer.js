@@ -11,13 +11,18 @@ import {
     getTool,
     getAnalysePending
 } from '../../store/view/reducers';
+import {
+    getAnalyseState
+} from '../../store/analysis/reducers'
 import { loadInstanceFileThunk } from '../../store/view/loadFile';
+import { checkIsAnalysedThunk } from '../../store/analysis/checkIsAnalysed'
 
 export class DicomCanvasContainer extends React.Component {
 
     componentDidMount() {
-        const { loadFile, seriesId } = this.props
-        loadFile(seriesId);
+        const {studyId, loadFile, seriesId, checkIsAnalysed } = this.props
+        checkIsAnalysed(studyId)
+        loadFile(seriesId)
     }
 
 
@@ -27,13 +32,16 @@ export class DicomCanvasContainer extends React.Component {
             instanceFileError,
             tool,
             layout,
-            analysePending } = this.props
-        if (instanceFilePending || instanceFile == undefined)
+            analysePending, 
+            analyseState } = this.props
+            
+        if (instanceFilePending || instanceFile === undefined)
             return <CircularProgress
-                style={{marginTop: '20%'}}></CircularProgress>
+                style={{ marginTop: '20%' }}></CircularProgress>
         else return <DicomCanvas instanceFile={instanceFile}
             tool={tool}
-            layout={layout}></DicomCanvas>
+            layout={layout}
+            analyseState={analyseState}></DicomCanvas>
     }
 }
 
@@ -44,11 +52,13 @@ function mapStateToProps(state) {
         tool: getTool(state),
         instanceFileError: getInstanceFileError(state),
         layout: getLayout(state),
+        analyseState: getAnalyseState(state)
     }
 }
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-    loadFile: (seriesId) => loadInstanceFileThunk(seriesId)
+    loadFile: (seriesId) => loadInstanceFileThunk(seriesId),
+    checkIsAnalysed: (studyId) => checkIsAnalysedThunk(studyId)
 }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(DicomCanvasContainer)

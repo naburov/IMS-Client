@@ -16,14 +16,14 @@ export const loadInstanceFileThunk = (seriesId) => {
         console.log(SERIES_URL + '/' + seriesId)
         dispatch(loadFilePending)
         fetch(SERIES_URL + '/' + seriesId)
-            .then(response =>response.json())
+            .then(response => response.json())
             .then(json => {
-                dispatch(putInstanceId(json.Instances[0]))
-                return json.Instances[0]
+                dispatch(putInstanceId(json.Instances))
+                return json.Instances
             })
-            .then(instanceId => {
+            .then(instanceIds => {
                 const xVolume = new XVolume();
-                xVolume.file = `http://localhost:8042/instances/${instanceId}/file`;
+                xVolume.file = instanceIds.map(id => `http://localhost:8042/instances/${id}/file`);
                 xVolume.load()
                     .then((volume) => {
                         console.log("volume loaded")
@@ -35,3 +35,4 @@ export const loadInstanceFileThunk = (seriesId) => {
             })
     }
 }
+

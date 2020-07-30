@@ -17,8 +17,10 @@ export class StudyListContainer extends React.Component {
 
     render() {
         const { studies, error, pending } = this.props
-        if (pending || studies == undefined) return <CircularProgress style={{ marginTop: '20%' }} ></CircularProgress>
-        else return <StudyList studies={studies}></StudyList>
+        if (pending || studies == undefined)
+            return <CircularProgress style={{ marginTop: '20%' }} ></CircularProgress>
+        else
+            return <StudyList studies={studies}></StudyList>
     }
 }
 
